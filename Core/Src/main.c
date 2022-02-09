@@ -333,6 +333,7 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 0 */
 
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_IC_InitTypeDef sConfigIC = {0};
 
@@ -340,11 +341,20 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 0;
+  htim3.Init.Prescaler = 20;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 65535;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   if (HAL_TIM_IC_Init(&htim3) != HAL_OK)
   {
     Error_Handler();
@@ -358,13 +368,13 @@ static void MX_TIM3_Init(void)
   sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
   sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
-  sConfigIC.ICFilter = 0;
+  sConfigIC.ICFilter = 8;
   if (HAL_TIM_IC_ConfigChannel(&htim3, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN TIM3_Init 2 */
-
+  HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
   /* USER CODE END TIM3_Init 2 */
 
 }
@@ -418,6 +428,32 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
 	/*Debug*/
 	/*MainClock++;
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);*/
+}
+
+uint16_t Period;
+float    Frequency;
+float    MotorSpeed;
+float    WheelSpeed;
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+	uint16_t InputCaptureValue = 0;
+
+	static uint16_t PrevInputCaptureValue = 0;
+
+	InputCaptureValue = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+	if(PrevInputCaptureValue < InputCaptureValue)
+	{
+		Period				= InputCaptureValue - PrevInputCaptureValue;
+	}
+	else
+	{
+		Period				= (0xFFFF - PrevInputCaptureValue) + InputCaptureValue;
+	}
+	Frequency = 84000000/((float)Period*21.0F);
+	MotorSpeed = (Frequency*60.0F)/11.0F;
+	WheelSpeed = MotorSpeed/75.0F;
+	PrevInputCaptureValue = InputCaptureValue;
+
 }
 /* USER CODE END 4 */
 
