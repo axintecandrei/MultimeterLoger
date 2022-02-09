@@ -430,14 +430,12 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);*/
 }
 
-uint16_t Period;
-float    Frequency;
-float    MotorSpeed;
-float    WheelSpeed;
+
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
 	uint16_t InputCaptureValue = 0;
-
+	uint16_t Period;
+	float    Frequency;
 	static uint16_t PrevInputCaptureValue = 0;
 
 	InputCaptureValue = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
@@ -450,8 +448,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 		Period				= (0xFFFF - PrevInputCaptureValue) + InputCaptureValue;
 	}
 	Frequency = 84000000/((float)Period*21.0F);
-	MotorSpeed = (Frequency*60.0F)/11.0F;
-	WheelSpeed = MotorSpeed/75.0F;
+	Set_TessDasSpeed((Frequency*60.0F)/11.0F);
 	PrevInputCaptureValue = InputCaptureValue;
 
 }

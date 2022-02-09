@@ -33,8 +33,8 @@ void TESS_DAS_INIT()
 static void TESS_FILL_DASOUTPUT_BUFFER(r_buff_data_t* out_buffer)
 {
    /* fill buffer with data*/
-   TESS_DAS_ADD_SIGNAL(TESS_LOOP_CNT,uint32,1); /*0*/
-   TESS_DAS_ADD_SIGNAL(Get_TessDasADC_CH_1(),uint16,1);     /*4*/
+   TESS_DAS_ADD_SIGNAL(Get_TessDasSpeed(),uint16,1); /*0*/
+   TESS_DAS_ADD_SIGNAL(Get_TessDasADC_CH_1(),uint16,1);     /*2*/
 
    /*Reset */
    TESS_DASOUTPUT_BUFF.filled = 0;

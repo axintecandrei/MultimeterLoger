@@ -72,6 +72,10 @@ uint16_t  PORT__TessDasADC_CH_1;
 #define Set_TessDasADC_CH_1(v) (PORT__TessDasADC_CH_1 = (v))
 #define Get_TessDasADC_CH_1()   (*((const uint16_t*) &PORT__TessDasADC_CH_1))
 
+uint16_t  PORT__TessDasSpeed;
+#define Set_TessDasSpeed(v) (PORT__TessDasSpeed = (v))
+#define Get_TessDasSpeed()   (*((const uint16_t*) &PORT__TessDasSpeed))
+
 
 r_buff_data_t           TESS_DATA_ACQ_BUFFER;
 r_buff_data_t           TESS_DMA_BUFFER;
