@@ -30,31 +30,6 @@ typedef struct r_buff_data_s
    uint8_t byte3;
    uint8_t byte4;
    uint8_t byte5;
-   uint8_t byte6;
-   uint8_t byte7;
-   uint8_t byte8;
-   uint8_t byte9;
-   uint8_t byte10;
-   uint8_t byte11;
-   uint8_t byte12;
-   uint8_t byte13;
-   uint8_t byte14;
-   uint8_t byte15;
-   uint8_t byte16;
-   uint8_t byte17;
-   uint8_t byte18;
-   uint8_t byte19;
-   uint8_t byte20;
-   uint8_t byte21;
-   uint8_t byte22;
-   uint8_t byte23;
-   uint8_t byte24;
-   uint8_t byte25;
-   uint8_t byte26;
-   uint8_t byte27;
-   uint8_t byte28;
-   uint8_t byte29;
-
 }r_buff_data_t;
 
 

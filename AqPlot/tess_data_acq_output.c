@@ -33,17 +33,9 @@ void TESS_DAS_INIT()
 static void TESS_FILL_DASOUTPUT_BUFFER(r_buff_data_t* out_buffer)
 {
    /* fill buffer with data*/
-   TESS_DAS_ADD_SIGNAL(0x55,uint8,1);     /*0*/
-   TESS_DAS_ADD_SIGNAL(-0x55,int8,1);     /*1*/
-   TESS_DAS_ADD_SIGNAL(TESS_RING_BUFFER.count,uint16,1);     /*2*/
-   TESS_DAS_ADD_SIGNAL(TESS_RING_BUFFER.head,uint16,1);     /*4*/
-   TESS_DAS_ADD_SIGNAL(TESS_RING_BUFFER.tail,uint16,1);     /*6*/
-   TESS_DAS_ADD_SIGNAL(Get_TessDasStates(),uint8,1);     /*8*/
-   TESS_DAS_ADD_SIGNAL(-1256,int16,1);     /*9*/
-   TESS_DAS_ADD_SIGNAL(-897856,int32,1);     /*11*/
-   TESS_DAS_ADD_SIGNAL(TESS_LOOP_CNT,uint32,1); /*15*/
-   TESS_DAS_ADD_SIGNAL(1.36F,int32,100); /*19*/
-   /*22*/
+   TESS_DAS_ADD_SIGNAL(TESS_LOOP_CNT,uint32,1); /*0*/
+   TESS_DAS_ADD_SIGNAL(Get_TessDasADC_CH_1(),uint16,1);     /*4*/
+
    /*Reset */
    TESS_DASOUTPUT_BUFF.filled = 0;
 
@@ -117,8 +109,6 @@ void TESS_DAS_GET_COMMANDS(uint8_t command)
 
 uint8_t TESS_DAS_UPDATE_UPON_TC()
 {
-
-
    uint8_t  usb_tx_result = USBD_OK;
 
 
@@ -127,16 +117,12 @@ uint8_t TESS_DAS_UPDATE_UPON_TC()
       if (!TESS_RINGBUFF_IS_EMPTY(&TESS_RING_BUFFER) )
       {
          TESS_DMA_BUFFER = TESS_RING_BUFFER_GET(&TESS_RING_BUFFER);
-
          usb_tx_result =  CDC_Transmit_FS((uint8_t *)&TESS_DMA_BUFFER,ACQ_BUFFER_SIZE);
-
       }
       else
       {
-
          /*trigger another transmittion*/
          Set_TessDasStates(DAS_StartMeas);
-
       }
    }
    return usb_tx_result;
@@ -146,7 +132,6 @@ uint8_t TESS_DAS_UPDATE_UPON_TC()
 void DAS_Receive_Clbk_USB (uint8_t* Buf, uint32_t Len)
 {
    uint8_t  rx_char_usb = 0;
-
 
    rx_char_usb = Buf[0];
    TESS_DAS_GET_COMMANDS(rx_char_usb);

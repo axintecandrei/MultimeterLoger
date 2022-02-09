@@ -23,7 +23,7 @@
 #if CFG_ACQ_ON
 
 /*DEFINES*/
-#define ACQ_BUFFER_SIZE 30
+#define ACQ_BUFFER_SIZE 6
 
 #define ACQ_HEADER      0x55
 #define ACQ_FOOTER      0x77
@@ -67,6 +67,11 @@ typedef struct tess_das_output_buff_s
 tess_das_states_t  PORT__TessDasStates;
 #define Set_TessDasStates(v) (PORT__TessDasStates = (v))
 #define Get_TessDasStates()   (*((const tess_das_states_t*) &PORT__TessDasStates))
+
+uint16_t  PORT__TessDasADC_CH_1;
+#define Set_TessDasADC_CH_1(v) (PORT__TessDasADC_CH_1 = (v))
+#define Get_TessDasADC_CH_1()   (*((const uint16_t*) &PORT__TessDasADC_CH_1))
+
 
 r_buff_data_t           TESS_DATA_ACQ_BUFFER;
 r_buff_data_t           TESS_DMA_BUFFER;
