@@ -63,6 +63,7 @@ static void MX_TIM3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint32_t MainClock;
+void TessSpeedCalculation(void);
 /* USER CODE END 0 */
 
 /**
@@ -78,7 +79,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+   HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -440,7 +441,8 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	Set_TessDasADC_CH_1(hadc->Instance->JDR1);
+
+	TessSpeedCalculation();
 	TESS_DAS_MAIN();
 	/*Debug*/
 	/*MainClock++;
@@ -450,25 +452,19 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-	uint16_t InputCaptureValue = 0;
-	uint16_t Period;
+	Set_TessDasInputCapture(HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1));
+}
+
+void TessSpeedCalculation(void)
+{
+	uint16_t AdcMotVoltValue = 0;
 	float    Frequency;
-	static uint16_t PrevInputCaptureValue = 0;
+	AdcMotVoltValue = hadc1.Instance->JDR1;
+	AdcMotVoltValue = (AdcMotVoltValue * 3300)/4095;
+	Set_TessDasADC_CH_1(AdcMotVoltValue * 3);
 
-	InputCaptureValue = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
-	/*if(PrevInputCaptureValue < InputCaptureValue)
-	{
-		Period				= InputCaptureValue - PrevInputCaptureValue;
-	}
-	else
-	{
-		Period				= (0xFFFF - PrevInputCaptureValue) + InputCaptureValue;
-	}
-	Frequency = 84000000/((float)Period*21.0F);*/
-	Frequency = HAL_RCC_GetSysClockFreq()/((float)InputCaptureValue*(float)(htim->Init.Prescaler));
+	Frequency = HAL_RCC_GetSysClockFreq()/((float)Get_TessDasInputCapture()*(float)(htim3.Init.Prescaler));
 	Set_TessDasSpeed((Frequency*60.0F)/11.0F);
-	/*PrevInputCaptureValue = InputCaptureValue;*/
-
 }
 /* USER CODE END 4 */
 
